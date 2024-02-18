@@ -1,0 +1,1419 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+        integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Volkhov:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <title>Vivekananda's Journey</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://unpkg.com/topojson-client@2"></script>
+</head>
+<script>
+
+</script>
+<style>
+    #offcanvasBottom {
+        top: 30px;
+        height: 100vh;
+    }
+
+    .carousel-item img {
+        object-fit: contain;
+        height: 100%;
+        width: 100%;
+    }
+
+    .chinarow {
+        margin-top: 10rem;
+        margin-left: 80px;
+    }
+
+
+    .chinacarousal {
+
+        /* float: right; */
+        /* margin-top: 100px;
+        margin-left:80px; */
+
+    }
+
+    .chinacarousal img {
+        height: 240px;
+    }
+
+    .chinacarousal .card-body {
+        /* height: 120px; */
+        color: #362312;
+    }
+
+    .chinacarousal p {
+        font-size: 16px;
+    }
+
+    .carousel-caption {
+        color: black;
+        /* Set text color */
+
+        background: rgba(255, 255, 255, 0.092);
+        /* Semi-transparent white background */
+        backdrop-filter: blur(10px);
+        /* Apply blur effect */
+        padding: 2px;
+        border-radius: 10px;
+        margin-bottom: 70px;
+        justify-content: center;
+    }
+
+    .rounded-circle-fixed {
+        position: fixed;
+        bottom: 40px;
+        /* Adjust margin from bottom */
+        right: 40px;
+        /* Adjust margin from right */
+        z-index: 1000;
+        /* Ensure it's above other content */
+        width: 56px;
+        height: 56px;
+        float: right !important;
+    }
+
+    #playbutton {
+
+        width: 56px;
+        height: 56px;
+
+
+    }
+
+    #pausebutton {
+
+        width: 56px;
+        height: 56px;
+        display: none;
+
+    }
+
+    #infobutton {
+        position: fixed;
+        top: 250px;
+        /* Adjust margin from bottom */
+        left: 1050px;
+        /* Adjust margin from right */
+        z-index: 1000;
+        /* Ensure it's above other content */
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.253);
+
+    }
+
+    canvas {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: -1;
+
+    }
+
+    #buttonContainer {
+        float: right;
+        padding-right: 100px;
+
+    }
+
+
+
+
+    #globebutton {
+        visibility: visible;
+    }
+
+    #globebutton.hidden {
+        visibility: hidden;
+    }
+
+    #nextbutton {
+        visibility: visible;
+    }
+
+    #nextbutton.hidden {
+        visibility: hidden;
+    }
+
+    .center-container img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #home-nav {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(255, 255, 255, 0.308);
+        /* Opaque background */
+        backdrop-filter: blur(10px);
+        /* Blurred background effect */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        /* Box shadow for depth */
+        align-items: center;
+
+
+
+    }
+</style>
+
+<body>
+    <canvas style="width:100%; height:100%"></canvas>
+    <div class="container justify-content-center" id="home-nav">
+        <div class="row justify-content-center">
+            <!-- Row of image and text -->
+
+
+
+            <div class="col-md-6">
+
+                <div style="display: flex;" class="p-3">
+                    <img src="./images/chicago/photo.avif" alt=""
+                        style="width: 50%; border-radius: 16px; margin-right: 20px;" class="img-fluid">
+                    <div class="p-2">
+                        <h3>Swami Vivekananda's Journey</h3>
+                        <p style="font-size: large;">Between 1893 to 1897
+                        <p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <!-- Title and text -->
+            <div class="col-md-6">
+                Discover Swami Vivekananda's incredible journey from India to America and back! Explore how he traveled
+                to Chicago, gave a famous speech, toured the United States, and returned to India spreading a message of
+                peace and unity. Join us as we follow his amazing adventure!
+            </div>
+        </div>
+        <div class="row justify-content-center pt-2">
+            <!-- Cards of chapters -->
+            <div class="col-md-12">
+                <div class="row justify-content-center mt-3 mb-3">
+
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card justify-content-center" style="width: 18rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pilgrimage to Parliament</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">Chapter I (1893)</h6>
+                                        <p class="card-text">In Search of Understanding: Embracing Diversity on the Road
+                                        </p>
+                                        <button onclick="hidenav();zoomToIndia();"
+                                            class=" btn btn-warning">Explore</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card justify-content-center" style="width: 18rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Awakening West</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">Chapter II (1894-1896)</h6>
+                                        <p class="card-text">From Monk to Rockstar: Captivating Audiences, Sparking a
+                                            Movement</p>
+                                        <button onclick="" class=" btn btn-warning">Explore</button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card" style="width: 18rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Homecoming</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">Chapter III (1897)</h6>
+                                        <p class="card-text">Building Institutions & Empowering Youth
+                                        </p>
+                                        <button onclick="" class=" btn btn-warning">Explore</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script type="text/javascript">
+
+
+        function playAudio() {
+            var audio = document.getElementById("audioPlayer");
+            var playButton = document.getElementById("playButton");
+            var pauseButton = document.getElementById("pauseButton");
+            audio.play();
+            console.log("playing");
+            playButton.style.display = "none";
+            pauseButton.style.display = "inline-block";
+        }
+
+        function pauseAudio() {
+            var audio = document.getElementById("audioPlayer");
+            var playButton = document.getElementById("playButton");
+            var pauseButton = document.getElementById("pauseButton");
+            audio.pause();
+            playButton.style.display = "inline-block";
+            pauseButton.style.display = "none";
+        }
+
+        function removeContentHtml() {
+            var existingContent = document.getElementById("ContentHtml");
+
+            if (existingContent) {
+                existingContent.parentNode.removeChild(existingContent);
+            }
+        }
+
+
+        function hidenav() {
+
+            document.getElementById("home-nav").style.display = "none";
+            // Create a new button element
+            if (!document.getElementById("globebutton")) {
+                var buttonHtml = `
+        <button id='globebutton' onclick='resetGlobe();' class='btn btn-dark rounded-circle-fixed rounded-circle p-3 d-flex align-items-center justify-content-center'>
+            <i class="fas fa-globe"></i>
+        </button>
+        <button id='nextbutton' style="bottom:100px;" class='btn btn-primary rounded-circle-fixed rounded-circle p-3 d-flex align-items-center justify-content-center'>
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    `;
+                document.body.insertAdjacentHTML('beforeend', buttonHtml);
+            }
+
+
+            var globebutton = document.getElementById("globebutton");
+            globebutton.classList.remove('hidden');
+            var nextbutton = document.getElementById("nextbutton");
+            nextbutton.classList.remove('hidden');
+
+        }
+        // function hide_globe_button() {
+
+        //     if (document.getElementById("globebutton").style.display = "block") {
+        //         // console.log("hiding");
+        //         document.getElementById("globebutton").style.display = "none";
+
+        //     }
+
+
+        // }
+        let ww = window.innerWidth;
+        let wh = window.innerHeight;
+
+        var canvas = d3.select("canvas")
+            .attr('width', ww * 1.5)
+            .attr('height', wh * 1.5);
+
+
+        var width = canvas.property("width"),
+            height = canvas.property("height"),
+            context = canvas.node().getContext("2d");
+
+
+
+        var projection = d3.geoOrthographic()
+            .scale((height - 10) / 2)
+            .translate([width / 2, height / 2])
+            .rotate([-153.7067635611267, -24.28009647801155, 21.550591606792]) // Rotate to center on India
+            .precision(0.1);
+
+
+        var path = d3.geoPath()
+            .projection(projection)
+            .context(context);
+
+        canvas.call(d3.zoom()
+            .on("start", zoomstarted)
+            .on('zoom', zoomed));
+
+        var render = function () { },
+            v0, // Mouse position in Cartesian coordinates at start of drag gesture.
+            r0, // Projection rotation as Euler angles at start.
+            q0; // Projection rotation as versor at start.
+
+        function zoomstarted() {
+            v0 = versor.cartesian(projection.invert(d3.mouse(this)));
+            r0 = projection.rotate();
+            q0 = versor(r0);
+        }
+
+        function zoomed() {
+            projection.scale(d3.event.transform.k * (height - 10) / 2);
+
+            var v1 = versor.cartesian(projection.rotate(r0).invert(d3.mouse(this))),
+                q1 = versor.multiply(q0, versor.delta(v0, v1)),
+                r1 = versor.rotation(q1);
+            projection.rotate(r1);
+
+            render();
+
+            console.log(projection.scale(), projection.rotate())
+        }
+
+
+
+        d3.json("topoIndia (1).json", function (error, world) {
+
+            // console.log(world);
+            if (error) throw error;
+
+            var sphere = { type: "Sphere" },
+                // land = topojson.feature(world, world.objects.land);
+                // countries=topojson.feature(world, world.objects.countries);
+                countries = topojson.feature(world, world.objects.topoIndia);
+
+
+            render = function () {
+
+                context.clearRect(0, 0, width, height);
+                // Set canvas background color
+                context.fillStyle = "#FFFDF7"; // Light gray color
+                context.fillRect(0, 0, width, height); // Fill the entire canvas with the specified color
+
+
+                context.beginPath(), path(sphere), context.fillStyle = "#EBF7EE", context.fill();
+                context.fillStyle = "#F6E7B2"; // land
+
+                // Draw the filled countries
+                countries.features.forEach(function (feature) {
+                    context.beginPath();
+                    path(feature);
+                    context.fill();
+                });
+
+                // Set the stroke color for the country borders
+                context.strokeStyle = "#B5AB88";
+                context.lineWidth = 0.15;
+
+                // Draw the country borders
+                countries.features.forEach(function (feature) {
+                    context.beginPath();
+                    path(feature);
+                    context.stroke();
+                });
+                // Draw location pins
+
+                drawLocationLabels();
+                drawLocationPins();
+
+
+            };
+
+            render();
+        });
+        (function (global, factory) {
+            typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+                typeof define === 'function' && define.amd ? define(factory) :
+                    (global.versor = factory());
+        }(this, (function () {
+            'use strict';
+
+            var acos = Math.acos,
+                asin = Math.asin,
+                atan2 = Math.atan2,
+                cos = Math.cos,
+                max = Math.max,
+                min = Math.min,
+                PI = Math.PI,
+                sin = Math.sin,
+                sqrt = Math.sqrt,
+                radians = PI / 180,
+                degrees = 180 / PI;
+
+            // Returns the unit quaternion for the given Euler rotation angles [λ, φ, γ].
+            function versor(e) {
+                var l = e[0] / 2 * radians, sl = sin(l), cl = cos(l), // λ / 2
+                    p = e[1] / 2 * radians, sp = sin(p), cp = cos(p), // φ / 2
+                    g = e[2] / 2 * radians, sg = sin(g), cg = cos(g); // γ / 2
+                return [
+                    cl * cp * cg + sl * sp * sg,
+                    sl * cp * cg - cl * sp * sg,
+                    cl * sp * cg + sl * cp * sg,
+                    cl * cp * sg - sl * sp * cg
+                ];
+            }
+
+            // Returns Cartesian coordinates [x, y, z] given spherical coordinates [λ, φ].
+            versor.cartesian = function (e) {
+                var l = e[0] * radians, p = e[1] * radians, cp = cos(p);
+                return [cp * cos(l), cp * sin(l), sin(p)];
+            };
+
+            // Returns the Euler rotation angles [λ, φ, γ] for the given quaternion.
+            versor.rotation = function (q) {
+                return [
+                    atan2(2 * (q[0] * q[1] + q[2] * q[3]), 1 - 2 * (q[1] * q[1] + q[2] * q[2])) * degrees,
+                    asin(max(-1, min(1, 2 * (q[0] * q[2] - q[3] * q[1])))) * degrees,
+                    atan2(2 * (q[0] * q[3] + q[1] * q[2]), 1 - 2 * (q[2] * q[2] + q[3] * q[3])) * degrees
+                ];
+            };
+
+            // Returns the quaternion to rotate between two cartesian points on the sphere.
+            versor.delta = function (v0, v1) {
+                var w = cross(v0, v1), l = sqrt(dot(w, w));
+                if (!l) return [1, 0, 0, 0];
+                var t = acos(max(-1, min(1, dot(v0, v1)))) / 2, s = sin(t); // t = θ / 2
+                return [cos(t), w[2] / l * s, -w[1] / l * s, w[0] / l * s];
+            };
+
+            // Returns the quaternion that represents q0 * q1.
+            versor.multiply = function (q0, q1) {
+                return [
+                    q0[0] * q1[0] - q0[1] * q1[1] - q0[2] * q1[2] - q0[3] * q1[3],
+                    q0[0] * q1[1] + q0[1] * q1[0] + q0[2] * q1[3] - q0[3] * q1[2],
+                    q0[0] * q1[2] - q0[1] * q1[3] + q0[2] * q1[0] + q0[3] * q1[1],
+                    q0[0] * q1[3] + q0[1] * q1[2] - q0[2] * q1[1] + q0[3] * q1[0]
+                ];
+            };
+
+            function cross(v0, v1) {
+                return [
+                    v0[1] * v1[2] - v0[2] * v1[1],
+                    v0[2] * v1[0] - v0[0] * v1[2],
+                    v0[0] * v1[1] - v0[1] * v1[0]
+                ];
+            }
+
+            function dot(v0, v1) {
+                return v0[0] * v1[0] + v0[1] * v1[1] + v0[2] * v1[2];
+            }
+
+            return versor;
+        })));
+
+
+        // Define the initial projection
+        var initialProjection = d3.geoOrthographic()
+            .scale((height - 10) / 2)
+            .translate([width / 2, height / 2])
+            .rotate([-153.7067635611267, -24.28009647801155, 21.550591606792]) // Rotate to center on India
+            .precision(0.1);
+        //zoom out to world map
+
+
+
+        function resetGlobe() {
+            removeContentHtml();
+
+            // ContentHtml.style.display = "none";
+
+            var nextbutton = document.querySelector('#nextbutton');
+            nextbutton.onclick = null;
+
+
+
+            // Define the duration of the transition
+            var transitionDuration = 1000; // in milliseconds
+
+            // Transition the projection to the initial state
+            d3.transition()
+                .duration(transitionDuration)
+                .tween("rotate", function () {
+                    var interpolateRotation = d3.interpolate(projection.rotate(), initialProjection.rotate());
+                    var interpolateScale = d3.interpolate(projection.scale(), initialProjection.scale());
+                    return function (t) {
+                        projection.rotate(interpolateRotation(t)).scale(interpolateScale(t));
+                        render();
+                    };
+                });
+
+            var home_nav = document.getElementById("home-nav");
+            if (home_nav.style.display === "none") {
+                home_nav.style.display = "block";
+            } else {
+                home_nav.style.display = "none";
+            }
+            var globebutton = document.getElementById("globebutton");
+            var nextbutton_id = document.getElementById("nextbutton");
+
+
+
+            globebutton.classList.add('hidden');
+            nextbutton_id.classList.add('hidden');
+            // if (globebutton.style.display != "none") {
+            //     globebutton.style.display = "none";
+            // }
+            // else {
+            //     globebutton.style.display = "block";
+            // }
+
+
+            // hide_globe_button();
+
+
+        }
+
+
+
+
+        //zoom in to India
+        function zoomToIndia() {
+            const indiaCoordinates = [-70.80532946534254, -21.390566430630617]; // Longitude and latitude of India
+            const indiaProjection = projection([indiaCoordinates[0], indiaCoordinates[1]]);
+
+
+            let angles = [...indiaCoordinates, 0];
+            setTimeout(() => {
+
+                d3.select(canvas).transition().duration(1000)
+                    .tween("rotate", () => {
+                        let interpolateRotation = d3.interpolate(projection.rotate(), angles)
+                        let interpolateZoom = d3.interpolate(projection.scale(), 1400)
+                        return (t) => {
+                            projection.rotate(interpolateRotation(t)).scale(interpolateZoom(t));
+                            render();
+                        }
+                    });
+
+
+                show_content(1);
+
+            }, 700);
+        }
+        function zoomToChina() {
+            console.log('zoom to China');
+            const chinaCoordinates = [-113.17942382090843, -23.117216186343484]; // Longitude and latitude of China center
+            const chinaProjection = projection([chinaCoordinates[0], chinaCoordinates[1]]);
+
+            let angles = [...chinaCoordinates, 0];
+
+            d3.json("chinacity.json", function (error, chinaData) {
+                if (error) throw error;
+
+                var cityFeature = topojson.feature(chinaData, chinaData.objects.chinacity);
+
+                // Rotate to the coordinates first
+                d3.select(canvas).transition().duration(500)
+                    .tween("rotate", () => {
+                        let interpolateRotation = d3.interpolate(projection.rotate(), angles);
+                        return (t) => {
+                            projection.rotate(interpolateRotation(t));
+                            render();
+                            // drawAdditionalTemples_china();
+                            drawCityBorder(cityFeature);
+                        };
+                    });
+
+                // Wait for 2 seconds before zooming in
+                setTimeout(() => {
+                    // Zoom in to the coordinates
+                    d3.select(canvas).transition().duration(1000)
+                        .tween("zoom", () => {
+                            let interpolateZoom = d3.interpolate(projection.scale(), 220000);
+                            return (t) => {
+                                projection.scale(interpolateZoom(t));
+                                render();
+
+                                drawCityBorder(cityFeature);
+                                drawAdditionalTemples_china();
+
+
+                            };
+                        });
+
+                    show_content(2); // Call function to show content for China after zoom-in
+                }, 800); // Wait for 2 seconds
+            });
+        }
+
+        function zoomToJapan() {
+            var transitionDuration = 1500; // in milliseconds
+
+            // Transition the projection to the initial state
+            d3.transition()
+                .duration(transitionDuration)
+                .tween("rotate", function () {
+                    var interpolateRotation = d3.interpolate(projection.rotate(), initialProjection.rotate());
+                    var interpolateScale = d3.interpolate(projection.scale(), initialProjection.scale());
+                    return function (t) {
+                        projection.rotate(interpolateRotation(t)).scale(interpolateScale(t));
+                        render();
+                    };
+                });
+
+            setTimeout(function () {
+                const japanCoordinates = [-135.96692239650602, -35.31592024550547]; // Longitude and latitude of Japan center
+                const japanProjection = projection([japanCoordinates[0], japanCoordinates[1]]);
+
+                angles = [...japanCoordinates, 0];
+
+                d3.select(canvas).transition().duration(transitionDuration)
+                    .tween("rotate", () => {
+                        let interpolateRotation = d3.interpolate(projection.rotate(), angles)
+                        let interpolateZoom = d3.interpolate(projection.scale(), 6543.76850540089)
+                        return (t) => {
+                            projection.scale(interpolateZoom(t)).rotate(interpolateRotation(t));
+                            render();
+                            // drawAdditionalTemples_japan();
+                            // drawCityBorder(cityFeature);
+                        }
+                    });
+
+                show_content(3); // Call function to show content for Japan after zoom-in
+            }, transitionDuration); // Delay for the duration of the zoom-out transition
+        }
+
+        function zoomToKobe() {
+            console.log(projection.scale(), projection.rotate())
+            const kobeCoordinates = [-134.8272635917208, -34.76259200652723]; // Longitude and latitude of China center
+            const kobeProjection = projection([kobeCoordinates[0], kobeCoordinates[1]]);
+
+            let angles = [...kobeCoordinates, 0];
+            d3.json("kobecity.json", function (error, kobeData) {
+                if (error) throw error;
+
+                var cityFeature = topojson.feature(kobeData, kobeData.objects.kobecity);
+                d3.select(canvas).transition().duration(1000)
+                    .tween("rotate", () => {
+                        let interpolateRotation = d3.interpolate(projection.rotate(), angles)
+                        let interpolateZoom = d3.interpolate(projection.scale(), 25500.128931746534)
+                        return (t) => {
+                            projection.scale(interpolateZoom(t)).rotate(interpolateRotation(t));
+                            render();
+
+                            drawCityBorder(cityFeature);
+                        }
+                    });
+
+
+                show_content(4);
+
+            });
+        }
+        function zoomToYakohoma_Canada() {
+            console.log(projection.scale(), projection.rotate())
+            const yakoCoordinates = [-167.4757149883499, -44.045971871513586]; // Longitude and latitude of China center
+            const yakoProjection = projection([yakoCoordinates[0], yakoCoordinates[1]]);
+
+            let angles = [...yakoCoordinates, 0];
+
+            d3.select(canvas).transition().duration(1000)
+                .tween("rotate", () => {
+                    let interpolateRotation = d3.interpolate(projection.rotate(), angles)
+                    let interpolateZoom = d3.interpolate(projection.scale(), 950.1864826936359)
+                    return (t) => {
+                        projection.scale(interpolateZoom(t)).rotate(interpolateRotation(t));
+                        render();
+
+                        // drawCityBorder(cityFeature);
+                    }
+                });
+
+
+            show_content(5);
+
+
+        }
+        function zoomToChicago() {
+            console.log(projection.scale(), projection.rotate());
+            const chicagoCoordinates = [87.7, -41.85]; // Longitude and latitude of Chicago center
+            const chicagoProjection = projection([chicagoCoordinates[0], chicagoCoordinates[1]]);
+
+            let angles = [...chicagoCoordinates, 0];
+
+            d3.json("chicago.json", function (error, chicagoData) {
+                if (error) throw error;
+
+                var cityFeature = topojson.feature(chicagoData, chicagoData.objects.chicago);
+
+                d3.json("jacksonpark.json", function (error, parkData) {
+                    if (error) throw error;
+
+                    var parkFeature = topojson.feature(parkData, parkData.objects.jacksonpark);
+
+                    d3.select(canvas).transition().duration(1000)
+                        .tween("rotate", () => {
+                            let interpolateRotation = d3.interpolate(projection.rotate(), angles)
+                            let interpolateZoom = d3.interpolate(projection.scale(), 350000)
+                            return (t) => {
+                                projection.scale(interpolateZoom(t)).rotate(interpolateRotation(t));
+                                render();
+
+                                drawCityBorder(cityFeature);
+                                drawParkBorder(parkFeature); // Draw park border
+                                draw_parliament();
+                            }
+                        });
+                });
+            });
+
+            // show_content(6);
+            setTimeout(show_content(6), 5000);
+        }
+
+        function zoomToParliament() {
+
+            show_content(7);
+
+
+        }
+
+
+        function drawParkBorder(parkFeature) {
+            // Draw the park border
+            context.beginPath();
+            path(parkFeature);
+            context.strokeStyle = "#96B588"; // Set the color of the park border
+            context.lineWidth = 0.5; // Set the width of the park border
+            context.stroke();
+            context.fillStyle = "rgba(150, 181, 136, 0.150)";
+            context.fill();
+
+            var centroid = path.centroid(parkFeature);
+            context.fillStyle = "#252619";
+            context.font = "22px Courier Prime"; // Set the font size and family
+            context.textAlign = "center";
+            context.fillText("Jackson Park", centroid[0], centroid[1] + 10);
+        }
+
+        function draw_parliament() {
+            // Additional location to be drawn for the Parliament
+            var parliamentLocation = [
+                { name: "Permanent Memorial Art Palace", country: "USA", latitude: 41.880399285996816, longitude: -87.62392787671797, offsetX: -110, offsetY: 70 }
+            ];
+
+            // Load icon image for the Parliament location
+            var parliamentIcon = new Image();
+            parliamentIcon.src = './images/icons/parliament.png'; // Replace 'parliament_icon.png' with the path to your Parliament icon image
+
+            // Draw pin and label for the Parliament location
+            parliamentLocation.forEach(function (location) {
+                var coords = [location.longitude, location.latitude];
+                var projectedCoords = projection(coords);
+
+                // Draw Parliament icon at the projected coordinates
+                context.drawImage(parliamentIcon, projectedCoords[0] - 12, projectedCoords[1] - 12, 72, 72); // Adjust the size as needed
+
+                // Draw location label
+                context.font = "22px Courier Prime";
+                context.fillStyle = "#252619";
+                context.fillText(location.name, projectedCoords[0] + location.offsetX, projectedCoords[1] + location.offsetY);
+            });
+        }
+
+
+        function show_content(x) {
+            var existingContent = document.getElementById("ContentHtml");
+            console.log('show contrnt: ', x);
+
+            if (existingContent) {
+                // Update existing content if it exists
+                console.log('content exists', x);
+                existingContent.innerHTML = generateContent(x);
+            } else {
+                // Create new content if it doesn't exist
+                console.log('content doesnt exists', x);
+                var ContentHtml = generateContent(x);
+                document.body.insertAdjacentHTML('beforeend', ContentHtml);
+            }
+        }
+
+        function generateContent(x) {
+            var button = document.querySelector('#nextbutton');
+            if (x == 1) {
+
+                button.onclick = function () {
+                    zoomToChina();
+                    console.log('test');
+                };
+                console.log(button.onclick);
+                console.log('after event');
+
+                return `<div id="ContentHtml">
+            <div class="card text-dark bg-light mb-3" style="max-width: 18rem; margin-left:80px; margin-top:120px; width:fixed;overflow:hidden;">
+                <div class="card-body">
+                    <h5 class="card-title">Vivekananda Sets Sail</h5>
+                    <p class="card-text">With money raised by his disciples in Madras, the kingdoms of Mysore, Ramnad, Khetri, diwans, and others, Narendra sailed from Bombay to Chicago on the ship Peninsula on May 31, 1893, christened "Vivekananda" at Ajit Singh of Khetri's suggestion. "The bliss of discerning Wisdom" is what the word "Vivekananda" signifies.</p>
+                    
+                </div></div>
+                <div style="margin-left: 700px;">
+                    <img src="./images/peninsula.png" alt="..." data-toggle="tooltip" data-placement="top" title="Peninsula Ship">
+                    <p style=" font-family: 'Courier Prime', monospace; font-style: italic;">Peninsula Ship</p>
+                    </div>
+                    
+                
+
+            </div>`;
+            } else if (x == 2) {
+
+
+                button.onclick = function () {
+                    zoomToJapan();
+                };
+
+                return `<div id="ContentHtml">
+                    <div class="container-fluid chinacontent">
+                <div class="row chinarow">
+                    
+                        
+                    <div class="card text-dark bg-light mb-3" style="max-width: 18rem; max-height:20rem;">
+                        <div class="card-body">
+                    
+                        <p class="card-text">In Canton, Guangzhou, he observed a few Buddhist sites.  
+                        During his travels, he came across Sanskrit manuscripts in Buddhist temples in China and Japan. 
+                        This discovery made him see how prevalent Buddhist and Hindu spirituality was throughout Asia. 
+                        Possibly, these interactions validated his conviction of the global appeal of Indian spirituality.
+                        </p>
+                   
+                        </div>
+                    </div>
+                    <div id="carouselExampleDark" class="carousel carousel-dark slide chinacarousal" data-bs-ride="carousel" style="max-width: 21rem;">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="card text-dark bg-light mb-3" style="width: 20rem;">
+                <img src="./images/china_temples/Honam Temple.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5>Honam Temple</h5>
+                    <p class="card-text">The Honam Temple in China, also called Hoi Tong Monastery was restricted to foreigners</p>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="card text-dark bg-light mb-3" style="width: 20rem;">
+                <img src="./images/china_temples/Canton-Chen-Clan.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5>Chen Clan Ancestral hall</h5>
+                    <p class="card-text">Built in 1894 by 72 Chen clans, it served as a space for their juniors to reside and prepare for the imperial examinations during the Qing dynasty.</p>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="card text-dark bg-light mb-3" style="width: 20rem;">
+                <img src="./images/china_temples/Guangxio.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5>Guangxio Temple</h5>
+                    <p class="card-text">Canton's "Three Great Buddhas": 10-ton bronze giants from 1663 housed in Guangxiao Temple, the city's oldest. (Sakyamuni center, Amidabutsu left, Matreiya right).</p>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="card" style="width: 20rem;">
+                <img src="./images/china_temples/Hualin.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5>Hualin Temple</h5>
+                    <p class="card-text">Also known as the Temple of the Five Hundred Genii or Gods, is one of the four major Buddhist temples in Guangzhou.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true" ></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+                </div>
+            </div>
+            
+
+            </div>`;
+            }
+            else if (x == 3) {
+
+                button.onclick = function () {
+                    zoomToKobe();
+                };
+
+                return `<div id="ContentHtml">
+                    <div style="margin-left:80px; margin-top:80px;">
+                    <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
+                    <div class="card-body">
+                    <h5 class="card-title">Monk among the machines</h5>
+                    <p class="card-text">From the towering chimneys of Osaka to the meticulous efficiency of Tokyo, 
+                        Vivekananda saw a nation propelled by the relentless gears of industrialization. 
+                        His writings reveal a deep admiration for the Japanese ability to blend modernization with tradition.
+                         He marveled at the "art plus absolute cleanliness" evident in their factories, a stark contrast to the o
+                         ften grimy realities of the West.</p>
+                    
+                    </div>
+                    </div>
+                    
+</div>
+
+
+                    
+</div>
+
+
+                
+            </div>`;
+            }
+            else if (x == 4) {
+
+                button.onclick = function () {
+                    zoomToYakohoma_Canada();
+                };
+
+                return `<div id="ContentHtml">
+    <div class="card text-dark bg-light mb-3" style="max-width: 22rem; margin: 80px;">
+    <div class="card-body">
+        <!-- Carousel -->
+        <div id="carouselExampleDark" class="carousel carousel-dark slide chinacarousal" data-bs-ride="carousel" style="margin-bottom: 20px;">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="./images/Kobe/1.jpg" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="./images/Kobe/2.jpg" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="./images/Kobe/3.jpg" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="./images/Kobe/4.jpg" class="d-block w-100" alt="...">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <!-- Card Content -->
+        <p class="card-text">Kobe reigned as a match-exporting giant in the 1890s, thanks to a clever factory and its perfect location. Swamiji, during his visit, likely saw Japan's impressive transformation from match importer to exporter, especially to China.</p>
+        
+        </div>
+</div>
+<div style="margin-top:0px; margin-left :80px; max-width: 22rem;">
+    <div class="card border-danger mb-3">
+  <div class="card-header">What Happened Later?</div>
+  <div class="card-body text-danger">
+    <h5 class="card-title">Swami on Beedi Packet</h5>
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#kobemodal">How?</button>
+    
+    
+  </div>
+</div>
+    
+</div>
+<div id="kobemodal" class="modal fade bd-example-modal-lg center" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">Swami on Beedi Packet</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div id="carouselExampleDark1" class="carousel carousel-dark slide chinacarousal" data-bs-ride="carousel" style="margin-bottom: 20px;">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="./images/Kobe/5.jpg" class="d-block w-100" alt="...">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="./images/Kobe/6.jpg" class="d-block w-100" alt="...">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark1" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark1" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Ironically, Vivekananda's face later appeared on Indian matchbox labels, despite matches being linked to harmful beedis today. Smoking concerns weren't present in his era, and he himself indulged in various tobacco forms. A previous story even mentioned his nostalgic hookah experience.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>`;
+
+            }
+            else if (x == 5) {
+
+                button.onclick = function () {
+                    zoomToChicago();
+                };
+                return `<div id="ContentHtml">
+                    <div class="container-fluid">
+    <div class="row" style="margin-left:622px; margin-top:300px;">
+        <div class="col-md-12" >
+            <div class="d-flex">
+                <div class="mr-0">
+                    <img src="./images/Empress.png" alt="..." data-toggle="tooltip" data-placement="top" title="Empress Ship">
+                </div>
+                <div class="card bg-light mb-3" style="max-width: 36rem;">
+  <div class="card-header">Meeting Jamshet Tata</div>
+  <div class="card-body">
+    
+    <p class="card-text" style="font-size:14px;">In the late 1800s, match-making was fierce competition. Japan started shipping matches to India in 1893. Swamiji, wanting India to make its own matches, urged Tata to start a factory. However, Tata was in Japan to negotiate better shipping rates for Indian cotton, not to discuss matches. Swamiji even mentioned the Japanese shipping line bringing matches to India.</p>
+  </div>
+</div>
+                
+            </div>
+        </div>
+    </div>
+                    
+                
+
+            </div>`;
+            }
+            else if (x == 6) {
+                button.onclick = function () {
+                    zoomToParliament();
+                };
+
+                return `<div id="ContentHtml">
+                        
+<div class="container" style="max-width:42rem; float:left; margin-top:80px; margin-left:80px;">
+  <div class="d-flex flex-wrap">
+    <div class="col-md-6 p-2">
+      <figure class="figure">
+        <img src="./images/chicago/fair1 1.png" class="figure-img img-fluid rounded"  alt="Image 1">
+        <figcaption class="figure-caption">The ferris wheel at the World’s Columbian Exposition (World’s Fair) in Chicago, 1893.</figcaption>
+      </figure>
+    </div>
+    <div class="col-md-6">
+      <figure class="figure">
+        <img src="./images/chicago/fair2 1.png" class="figure-img img-fluid rounded"  alt="Image 2">
+        <figcaption class="figure-caption">Poster for the Chicago World’s Fair, 1893.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">World Columbian Fair 1893</h5>
+          <p class="card-text">The Fair, boasting an amusement park for the first time, presented him with new forms of entertainment
+             and technology potentially contrasting with his traditional upbringing.
+             The Parliament of Religions, although organized by Western esoteric groups, 
+             brought together diverse faith representatives, exposing Vivekananda to different religious perspectives 
+             and practices.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+                        </div>`;
+
+            }
+
+            // Call the function to return the element after 2 seconds
+            else if (x == 7) {
+
+                return `<div id="ContentHtml">
+                        <div class="container-fluid">
+                            <div class=" card audio-card" style="max-width:18rem; margin:80px;">
+                                
+  
+    <img src="./images/chicago/photo.avif" alt="Photo" class="card-img-top">
+    <div class="card-body">
+  
+    <button id="playButton" type="button" class="play-btn btn" onclick="playAudio()"><i class="fas fa-play"></i></button>
+    <button id="pauseButton" type="button" class="pause-btn btn" onclick="pauseAudio()"><i class="fas fa-pause"></i></button>
+  
+  <audio id="audioPlayer" src="speech.mp3"></audio>
+</div>
+</div>
+
+
+<button id='infobutton' data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom" class='btn btn-warning rounded-circle-fixed rounded-circle p-3 d-flex align-items-center justify-content-center'>
+  <i class="fas fa-question"></i>
+</button>
+
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasBottomLabel">What happened on September 11, 1893?</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="container center-container">
+      <div class="row">
+        <div class="col">
+          <img src="./images/chicago/fair3.avif" alt="Image" class="img-fluid p-1">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p class="text-muted">History unveiled its first true meeting of faiths in Chicago. Lawyer Charles C. Bonney, driven by a vision of global harmony, dreamt of uniting diverse religions in a "friendly convention." Nearly 10,000 invitations echoed across the globe, beckoning spiritual representatives to share their stories in America's grand invitation: "Come, tell us your faith."</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <img src="./images/chicago/fair4.jpg" alt="Image" class="img-fluid p-1">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p class="text-muted">The Parliament of Religions was held at the newly built Art Institute on Michigan Avenue in Chicago shown in this early Curt Teich postcard.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <img src="./images/chicago/fair5.jpg" alt="Image" class="img-fluid p-1">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p class="text-muted pb-3">Distinguished speakers droned on at the packed Parliament, each thanking their hosts and vying for attention. Then, a virtual nobody named Vivekananda, frozen with stage fright, hesitated twice when called. Finally, nerves calmed, he stood and uttered a simple greeting: "Sisters and Brothers of America."
+          The hall erupted. Thunderous applause roared for two full minutes. In that instant, an unknown monk became a sensation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+                        
+
+</div>`
+
+            }
+
+            else {
+                return ""; // Return empty string for other parameters
+            }
+        }
+
+
+        function drawCityBorder(cityFeature) {
+            // Draw the city border
+            context.beginPath();
+            path(cityFeature);
+            context.strokeStyle = "#EB875C"; // Set the color of the city border
+            context.lineWidth = 0.5; // Set the width of the city border
+            context.stroke();
+            context.fillStyle = "rgba(236, 213, 132, 0.4)";
+            context.fill();
+            var centroid = path.centroid(cityFeature);
+
+
+        }
+
+
+
+
+
+
+        function drawAdditionalTemples_china() {
+            // Additional locations to be drawn after zooming to China
+            var additionalLocations = [
+                { name: "Chen Clan Ancestral Hall", country: "China", latitude: 23.13038445, longitude: 113.2400904, offsetX: -100, offsetY: 0 },
+                { name: "Hualin Temple", country: "China", latitude: 23.1166256, longitude: 113.2472295, offsetX: -140, offsetY: 60 },
+                { name: "Phu Chau Temple", country: "China", latitude: 10.83390501, longitude: 106.6912425, offsetX: -20, offsetY: 56 },
+                { name: "Honam Temple", country: "China", latitude: 23.10629087, longitude: 113.2588124, offsetX: 30, offsetY: 65 },
+                { name: "Guangxiao Temple", country: "China", latitude: 23.13029031, longitude: 113.2564492, offsetX: 50, offsetY: 62 }
+            ];
+
+            // Load temple icon image
+            var templeIcon = new Image();
+            templeIcon.src = './images/icons/temple.png'; // Replace 'temple_icon.png' with the path to your temple icon image
+
+            // Draw pins and labels for additional locations
+            additionalLocations.forEach(function (location) {
+                var coords = [location.longitude, location.latitude];
+                var projectedCoords = projection(coords);
+
+                // Draw temple icon at the projected coordinates
+                context.drawImage(templeIcon, projectedCoords[0] - 12, projectedCoords[1] - 12, 72, 72); // Adjust the size as needed
+
+                // Draw location label
+                context.font = "22px Courier Prime";
+                context.fillStyle = "#252619";
+                context.fillText(location.name, projectedCoords[0] + location.offsetX, projectedCoords[1] + location.offsetY);
+            });
+        }
+
+
+
+
+        // Calculate the font size based on the current zoom level
+        var currentZoomLevel1 = projection.scale();
+
+        if (currentZoomLevel1 < 800) {
+            //Drawing Locations
+            console.log('test0');
+            var locations = [
+                { name: "East-coast port of Bombay", country: "India", latitude: 18.961538, longitude: 72.850101, offsetX: -30, offsetY: -10 },
+                { name: "Colombo Port", country: "Sri Lanka", latitude: 6.941845, longitude: 79.846432, offsetX: 10, offsetY: -10 },
+                { name: "Penang", country: "Malaysia", latitude: 5.430326745, longitude: 100.347019, offsetX: 10, offsetY: -10 },
+                { name: "Boat Quay", country: "Singapore", latitude: 1.2861, longitude: 103.8502, offsetX: 10, offsetY: -10 },
+                { name: "Victoria Harbour", country: "Hong Kong", latitude: 22.303714, longitude: 114.165822, offsetX: -100, offsetY: 30 },
+                { name: "Guangzhou", country: "China", latitude: 23.1291, longitude: 113.2644, offsetX: 80, offsetY: 20 },
+                { name: "Nagasaki", country: "Japan", latitude: 32.7705, longitude: 129.8687, offsetX: 10, offsetY: 40 },
+                { name: "Kobe", country: "Japan", latitude: 34.6913, longitude: 135.1830, offsetX: -85, offsetY: 30 },
+                { name: "Osaka", country: "Japan", latitude: 34.6937, longitude: 135.5022, offsetX: -72, offsetY: 0 },
+                { name: "Kyoto", country: "Japan", latitude: 35.0213, longitude: 135.7557, offsetX: -20, offsetY: -20 },
+                { name: "Tokyo", country: "Japan", latitude: 35.6895, longitude: 139.6917, offsetX: 24, offsetY: -10 },
+                { name: "Yokohama", country: "Japan", latitude: 35.4437, longitude: 139.6380, offsetX: 10, offsetY: 20 },
+                { name: "Vancouver", country: "Canada", latitude: 49.2827, longitude: -123.1207, offsetX: 10, offsetY: -10 },
+                { name: "San Francisco", country: "US", latitude: 37.7749, longitude: -122.4194, offsetX: 10, offsetY: -10 },
+                { name: "Chicago", country: "US", latitude: 41.87520013480773, longitude: -87.63657312762538, offsetX: -100, offsetY: -20 }
+            ];
+        }
+
+
+
+        // Function to draw location pins
+        function drawLocationPins() {
+            locations.forEach(function (location) {
+                var coords = [location.longitude, location.latitude];
+                var projectedCoords = projection(coords);
+
+                // Draw a circle at the projected coordinates to represent the location pin
+                context.beginPath();
+                context.arc(projectedCoords[0], projectedCoords[1], 4, 0, 2 * Math.PI);
+                context.fillStyle = "#EB875C"; // Set pin color
+
+                context.fill();
+
+
+            });
+        }
+        function drawLocationLabels() {
+            locations.forEach(function (location) {
+                var coords = [location.longitude, location.latitude];
+                var projectedCoords = projection(coords);
+
+                // Individual label offset for each location
+                var labelOffsetX = location.offsetX || 0; // Default to 0 if offsetX is not defined
+                var labelOffsetY = location.offsetY || 0; // Default to 0 if offsetY is not defined
+
+                // Apply offset to the projected coordinates
+                var labelX = projectedCoords[0] + labelOffsetX;
+                var labelY = projectedCoords[1] + labelOffsetY;
+
+                // Draw location label
+                // Define the maximum zoom level for font size 24
+                var maxZoomLevelFor32FontSize = 10000;
+
+                // Calculate the font size based on the current zoom level
+                var currentZoomLevel = projection.scale();
+                var fontSize;
+                if (currentZoomLevel > maxZoomLevelFor32FontSize) {
+                    labelX = labelX + 100;
+                }
+
+                if (currentZoomLevel > maxZoomLevelFor32FontSize) {
+                    fontSize = 32;
+                } else {
+                    // Use the interpolated font size for zoom levels below 10000
+                    var zoomLevels = [855, maxZoomLevelFor32FontSize]; // Zoom levels
+                    var fontSizes = [22, 36]; // Corresponding font sizes
+
+                    // Interpolate the font size based on the current zoom level
+                    var interpolateFontSize = d3.scaleLinear()
+                        .domain(zoomLevels)
+                        .range(fontSizes);
+
+                    fontSize = interpolateFontSize(currentZoomLevel);
+                }
+
+                // Apply the font size
+                context.font = fontSize + "px Courier Prime";
+
+                context.fillStyle = "#252619";
+                context.fillText(location.name, labelX, labelY);
+                // Draw curved arrow
+                var locationX = projectedCoords[0];
+                var locationY = projectedCoords[1];
+                var midpointX = (locationX + labelX) / 2;
+                var midpointY = (locationY + labelY) / 2;
+
+
+                context.beginPath();
+                context.moveTo(locationX, locationY);
+                context.quadraticCurveTo(midpointX, midpointY, labelX, labelY);
+                context.strokeStyle = "grey"; // Set arrow color
+                context.lineWidth = 0.8; // Set arrow width
+                context.stroke();
+
+                // Draw arrowhead
+                var angle = Math.atan2(labelY - midpointY, labelX - midpointX);
+                context.beginPath();
+                context.moveTo(labelX, labelY);
+                context.lineTo(labelX - 6 * Math.cos(angle - Math.PI / 6), labelY - 6 * Math.sin(angle - Math.PI / 6));
+                context.lineTo(labelX - 6 * Math.cos(angle + Math.PI / 6), labelY - 6 * Math.sin(angle + Math.PI / 6));
+                context.lineTo(labelX, labelY);
+                context.fillStyle = "grey"; // Set arrowhead color
+                context.fill();
+
+
+
+
+                // Draw lines connecting the locations
+                context.beginPath();
+                locations.forEach(function (location) {
+                    var coords = [location.longitude, location.latitude];
+                    var projectedCoords = projection(coords);
+                    context.lineTo(projectedCoords[0], projectedCoords[1]);
+                });
+                context.strokeStyle = "#A68758"; // Set line color
+                context.lineWidth = 0.8; // Set line width
+                context.stroke();
+
+            }
+
+            );
+        }
+
+
+    </script>
+
+</body>
+
+</html>

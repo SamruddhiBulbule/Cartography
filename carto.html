@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://unpkg.com/topojson-client@2"></script>
+<!-- <script src="versor.js"></script> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    canvas{
+          position:absolute;
+          left:0;
+          top:0;
+          z-index:-1;
+          
+      }
+    #buttonContainer {
+        float: right;
+        padding-right: 100px;
+
+    }
+
+    #content_text {
+        width: 200px;
+        /* Set a fixed width for the column */
+        word-wrap: break-word;
+    }
+</style>
+
+<body>
+    <canvas style="width:100%; height:100%"></canvas>
+    <div id="buttonContainer">
+        <button onclick="resetGlobe()">World Map</button>
+        <button onclick="zoomToIndia()">Zoom to India</button>
+        <button onclick="zoomToChina()">Zoom to China</button>
+        <p id="content_text"></p>
+    </div>
+<div>
+    <div>Chapter 1</div>
+    <div>Chapter 2</div>
+    <div>Chapter 3</div>
+</div>
+
+    <script>
+
+        let ww = window.innerWidth;
+        let wh = window.innerHeight;
+
+        var canvas = d3.select("canvas")
+        .attr('width',ww*1.5)
+        .attr('height',wh*1.5);
+
+
+        var  width = canvas.property("width"),
+            height = canvas.property("height"),
+            context = canvas.node().getContext("2d");
+
+
+
+        var projection = d3.geoOrthographic()
+            .scale((height - 10) / 2)
+            .translate([width / 2, height / 2])
+            .rotate([-153.7067635611267, -24.28009647801155, 21.550591606792]) // Rotate to center on India
+            .precision(0.1);
+
+
+        var path = d3.geoPath()
+            .projection(projection)
+            .context(context);
+
+        canvas.call(d3.zoom()
+            .on("start", zoomstarted)
+            .on('zoom', zoomed));
+
+        var render = function () { },
+            v0, // Mouse position in Cartesian coordinates at start of drag gesture.
+            r0, // Projection rotation as Euler angles at start.
+            q0; // Projection rotation as versor at start.
+
+        function zoomstarted() {
+            v0 = versor.cartesian(projection.invert(d3.mouse(this)));
+            r0 = projection.rotate();
+            q0 = versor(r0);
+        }
+
+        function zoomed() {
+            projection.scale(d3.event.transform.k * (height - 10) / 2);
+
+            var v1 = versor.cartesian(projection.rotate(r0).invert(d3.mouse(this))),
+                q1 = versor.multiply(q0, versor.delta(v0, v1)),
+                r1 = versor.rotation(q1);
+            projection.rotate(r1);
+
+            render();
+
+            console.log(projection.scale(), projection.rotate())
+        }
+
+
+
+        d3.json("topoIndia (1).json", function (error, world) {
+
+            // console.log(world);
+            if (error) throw error;
+
+            var sphere = { type: "Sphere" },
+                // land = topojson.feature(world, world.objects.land);
+                // countries=topojson.feature(world, world.objects.countries);
+                countries = topojson.feature(world, world.objects.topoIndia);
+
+
+            render = function () {
+
+                context.clearRect(0, 0, width, height);
+                // Set canvas background color
+                context.fillStyle = "#f8f8f8"; // Light gray color
+                context.fillRect(0, 0, width, height); // Fill the entire canvas with the specified color
+
+
+                context.beginPath(), path(sphere), context.fillStyle = "#BAD7BD", context.fill();
+                context.fillStyle = "#F6E7B2"; // Example color: light blue
+
+                // Draw the filled countries
+                countries.features.forEach(function (feature) {
+                    context.beginPath();
+                    path(feature);
+                    context.fill();
+                });
+
+                // Set the stroke color for the country borders
+                context.strokeStyle = "#A68758"; // Example color: gray
+                context.lineWidth = 0.25;
+
+                // Draw the country borders
+                countries.features.forEach(function (feature) {
+                    context.beginPath();
+                    path(feature);
+                    context.stroke();
+                });
+                // Draw location pins
+                drawLocationPins();
+                drawLocationLabels();
+
+
+            };
+
+            render();
+        });
+        (function (global, factory) {
+            typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+                typeof define === 'function' && define.amd ? define(factory) :
+                    (global.versor = factory());
+        }(this, (function () {
+            'use strict';
+
+            var acos = Math.acos,
+                asin = Math.asin,
+                atan2 = Math.atan2,
+                cos = Math.cos,
+                max = Math.max,
+                min = Math.min,
+                PI = Math.PI,
+                sin = Math.sin,
+                sqrt = Math.sqrt,
+                radians = PI / 180,
+                degrees = 180 / PI;
+
+            // Returns the unit quaternion for the given Euler rotation angles [λ, φ, γ].
+            function versor(e) {
+                var l = e[0] / 2 * radians, sl = sin(l), cl = cos(l), // λ / 2
+                    p = e[1] / 2 * radians, sp = sin(p), cp = cos(p), // φ / 2
+                    g = e[2] / 2 * radians, sg = sin(g), cg = cos(g); // γ / 2
+                return [
+                    cl * cp * cg + sl * sp * sg,
+                    sl * cp * cg - cl * sp * sg,
+                    cl * sp * cg + sl * cp * sg,
+                    cl * cp * sg - sl * sp * cg
+                ];
+            }
+
+            // Returns Cartesian coordinates [x, y, z] given spherical coordinates [λ, φ].
+            versor.cartesian = function (e) {
+                var l = e[0] * radians, p = e[1] * radians, cp = cos(p);
+                return [cp * cos(l), cp * sin(l), sin(p)];
+            };
+
+            // Returns the Euler rotation angles [λ, φ, γ] for the given quaternion.
+            versor.rotation = function (q) {
+                return [
+                    atan2(2 * (q[0] * q[1] + q[2] * q[3]), 1 - 2 * (q[1] * q[1] + q[2] * q[2])) * degrees,
+                    asin(max(-1, min(1, 2 * (q[0] * q[2] - q[3] * q[1])))) * degrees,
+                    atan2(2 * (q[0] * q[3] + q[1] * q[2]), 1 - 2 * (q[2] * q[2] + q[3] * q[3])) * degrees
+                ];
+            };
+
+            // Returns the quaternion to rotate between two cartesian points on the sphere.
+            versor.delta = function (v0, v1) {
+                var w = cross(v0, v1), l = sqrt(dot(w, w));
+                if (!l) return [1, 0, 0, 0];
+                var t = acos(max(-1, min(1, dot(v0, v1)))) / 2, s = sin(t); // t = θ / 2
+                return [cos(t), w[2] / l * s, -w[1] / l * s, w[0] / l * s];
+            };
+
+            // Returns the quaternion that represents q0 * q1.
+            versor.multiply = function (q0, q1) {
+                return [
+                    q0[0] * q1[0] - q0[1] * q1[1] - q0[2] * q1[2] - q0[3] * q1[3],
+                    q0[0] * q1[1] + q0[1] * q1[0] + q0[2] * q1[3] - q0[3] * q1[2],
+                    q0[0] * q1[2] - q0[1] * q1[3] + q0[2] * q1[0] + q0[3] * q1[1],
+                    q0[0] * q1[3] + q0[1] * q1[2] - q0[2] * q1[1] + q0[3] * q1[0]
+                ];
+            };
+
+            function cross(v0, v1) {
+                return [
+                    v0[1] * v1[2] - v0[2] * v1[1],
+                    v0[2] * v1[0] - v0[0] * v1[2],
+                    v0[0] * v1[1] - v0[1] * v1[0]
+                ];
+            }
+
+            function dot(v0, v1) {
+                return v0[0] * v1[0] + v0[1] * v1[1] + v0[2] * v1[2];
+            }
+
+            return versor;
+        })));
+
+
+        // Define the initial projection
+        var initialProjection = d3.geoOrthographic()
+            .scale((height - 10) / 2)
+            .translate([width / 2, height / 2])
+            .rotate([-153.7067635611267, -24.28009647801155, 21.550591606792]) // Rotate to center on India
+            .precision(0.1);
+        //zoom out to world map
+        function resetGlobe() {
+            // Define the duration of the transition
+            var transitionDuration = 1000; // in milliseconds
+
+            // Transition the projection to the initial state
+            d3.transition()
+                .duration(transitionDuration)
+                .tween("rotate", function () {
+                    var interpolateRotation = d3.interpolate(projection.rotate(), initialProjection.rotate());
+                    var interpolateScale = d3.interpolate(projection.scale(), initialProjection.scale());
+                    return function (t) {
+                        projection.rotate(interpolateRotation(t)).scale(interpolateScale(t));
+                        render();
+                    };
+                });
+        }
+
+
+
+
+        //zoom in to India
+        function zoomToIndia() {
+            const indiaCoordinates = [-95.80532946534254, -20.390566430630617]; // Longitude and latitude of India
+            const indiaProjection = projection([indiaCoordinates[0], indiaCoordinates[1]]);
+
+
+            let angles = [...indiaCoordinates, 0];
+
+            d3.select(canvas).transition().duration(1000)
+                .tween("rotate", () => {
+                    let interpolateRotation = d3.interpolate(projection.rotate(), angles)
+                    let interpolateZoom = d3.interpolate(projection.scale(), 855)
+                    return (t) => {
+                        projection.rotate(interpolateRotation(t)).scale(interpolateZoom(t));
+                        render();
+                    }
+                });
+            var contentText = document.getElementById("content_text");
+            contentText.textContent = "In May 1893 he boarded a steamship at the east-coast port of Bombay, bound for North America. But instead of travelling West, he travelled East – first to Ceylon (now Sri Lanka)";
+
+        }
+        function zoomToChina() {
+            const chinaCoordinates = [-113.27806694130952, -23.127536216908872]; // Longitude and latitude of China center
+            const chinaProjection = projection([chinaCoordinates[0], chinaCoordinates[1]]);
+
+            let angles = [...chinaCoordinates, 0];
+
+            d3.json("chinacity.json", function (error, chinaData) {
+                if (error) throw error;
+
+                var cityFeature = topojson.feature(chinaData, chinaData.objects.chinacity);
+
+                d3.select(canvas).transition().duration(1000)
+                    .tween("rotate", () => {
+                        let interpolateRotation = d3.interpolate(projection.rotate(), angles)
+                        let interpolateZoom = d3.interpolate(projection.scale(), 160000)
+                        return (t) => {
+                            projection.scale(interpolateZoom(t)).rotate(interpolateRotation(t));
+                            render();
+                            drawAdditionalTemples();
+                            drawCityBorder(cityFeature);
+                        }
+                    });
+            });
+        }
+
+        function drawCityBorder(cityFeature) {
+            // Draw the city border
+            context.beginPath();
+            path(cityFeature);
+            context.strokeStyle = "brown"; // Set the color of the city border
+            context.lineWidth = 0.5; // Set the width of the city border
+            context.stroke();
+            var centroid = path.centroid(cityFeature);
+
+            // Draw the label
+            context.textAlign = "center";
+            context.fillStyle = "black"; // Set the color of the label
+            context.font = "bold 14px Arial"; // Set the font of the label
+            context.fillText("Guangzhou City", centroid[0], centroid[1]); // Draw the label
+        }
+
+
+
+
+
+        // function drawAdditionalTemples() {
+        //     // Additional locations to be drawn after zooming to China
+        //     var additionalLocations = [
+        //         { name: "Chen Clan Ancestral Hall", country: "China", latitude: 23.13038445, longitude: 113.2400904, offsetX: -30, offsetY: -10 },
+        //         { name: "Hualin Temple", country: "China", latitude: 23.1166256, longitude: 113.2472295, offsetX: 10, offsetY: -10 },
+        //         { name: "Phu Chau Temple", country: "China", latitude: 10.83390501, longitude: 106.6912425, offsetX: 10, offsetY: -10 },
+        //         { name: "Honam Temple", country: "China", latitude: 23.10629087, longitude: 113.2588124, offsetX: 10, offsetY: -10 },
+        //         { name: "Guangxiao Temple", country: "China", latitude: 23.13029031, longitude: 113.2564492, offsetX: 10, offsetY: -10 }
+        //     ];
+
+
+        //     // Draw pins and labels for additional locations
+        //     additionalLocations.forEach(function (location) {
+        //         var coords = [location.longitude, location.latitude];
+        //         var projectedCoords = projection(coords);
+
+        //         // Draw a circle at the projected coordinates to represent the location pin
+        //         context.beginPath();
+        //         context.arc(projectedCoords[0], projectedCoords[1], 4, 0, 2 * Math.PI);
+        //         context.fillStyle = "brown"; // Set pin color
+        //         context.fill();
+
+        //         // Draw location label
+        //         context.font = "14px Libre Baskerville";
+        //         context.fillStyle = "black";
+        //         context.fillText(location.name, projectedCoords[0] + location.offsetX, projectedCoords[1] + location.offsetY);
+
+        //     });
+           
+        // }
+        function drawAdditionalTemples() {
+    // Additional locations to be drawn after zooming to China
+    var additionalLocations = [
+        { name: "Chen Clan Ancestral Hall", country: "China", latitude: 23.13038445, longitude: 113.2400904, offsetX:-78, offsetY: 20 },
+        { name: "Hualin Temple", country: "China", latitude: 23.1166256, longitude: 113.2472295, offsetX:74, offsetY: 30},
+        { name: "Phu Chau Temple", country: "China", latitude: 10.83390501, longitude: 106.6912425, offsetX: -20, offsetY: 10 },
+        { name: "Honam Temple", country: "China", latitude: 23.10629087, longitude: 113.2588124, offsetX: 30, offsetY: 40 },
+        { name: "Guangxiao Temple", country: "China", latitude: 23.13029031, longitude: 113.2564492, offsetX: 30, offsetY: 40 }
+    ];
+
+    // Load temple icon image
+    var templeIcon = new Image();
+    templeIcon.src = './images/icons/temple.png'; // Replace 'temple_icon.png' with the path to your temple icon image
+
+    // Draw pins and labels for additional locations
+    additionalLocations.forEach(function (location) {
+        var coords = [location.longitude, location.latitude];
+        var projectedCoords = projection(coords);
+
+        // Draw temple icon at the projected coordinates
+        context.drawImage(templeIcon, projectedCoords[0] - 0, projectedCoords[1] - 0, 36, 36); // Adjust the size as needed
+
+        // Draw location label
+        context.font = "14px Libre Baskerville";
+        context.fillStyle = "black";
+        context.fillText(location.name, projectedCoords[0] + location.offsetX, projectedCoords[1] + location.offsetY);
+    });
+}
+
+
+
+
+        //Drawing Locations
+        var locations = [
+            { name: "east-coast port of Bombay", country: "India", latitude: 18.961538, longitude: 72.850101, offsetX: -30, offsetY: -10 },
+            { name: "Colombo Port", country: "Sri Lanka", latitude: 6.941845, longitude: 79.846432, offsetX: 10, offsetY: -10 },
+            { name: "Penang", country: "Malaysia", latitude: 5.430326745, longitude: 100.347019, offsetX: 10, offsetY: -10 },
+            { name: "Boat Quay", country: "Singapore", latitude: 1.2861, longitude: 103.8502, offsetX: 10, offsetY: -10 },
+            { name: "Victoria Harbour", country: "Hong Kong", latitude: 22.303714, longitude: 114.165822, offsetX: 10, offsetY: -10 },
+            { name: "Guangzhou", country: "China", latitude: 23.1291, longitude: 113.2644, offsetX: 70, offsetY: 20 },
+            { name: "Nagasaki", country: "Japan", latitude: 32.7705, longitude: 129.8687, offsetX: 10, offsetY: 20 },
+            { name: "Kobe", country: "Japan", latitude: 34.6913, longitude: 135.1830, offsetX: -50, offsetY: -10 },
+            { name: "Osaka", country: "Japan", latitude: 34.6937, longitude: 135.5022, offsetX: -25, offsetY: -25 },
+            { name: "Kyoto", country: "Japan", latitude: 35.0213, longitude: 135.7557, offsetX: -20, offsetY: -10 },
+            { name: "Tokyo", country: "Japan", latitude: 35.6895, longitude: 139.6917, offsetX: 10, offsetY: -10 },
+            { name: "Yokohama", country: "Japan", latitude: 35.4437, longitude: 139.6380, offsetX: 10, offsetY: 20 },
+            { name: "Vancouver", country: "Canada", latitude: 49.2827, longitude: -123.1207, offsetX: 10, offsetY: -10 },
+            { name: "San Francisco", country: "US", latitude: 37.7749, longitude: -122.4194, offsetX: 10, offsetY: -10 },
+            { name: "Chicago", country: "US", latitude: 41.8781, longitude: -87.6298, offsetX: 10, offsetY: -10 }
+        ];
+        // Function to draw location pins
+        function drawLocationPins() {
+            locations.forEach(function (location) {
+                var coords = [location.longitude, location.latitude];
+                var projectedCoords = projection(coords);
+
+                // Draw a circle at the projected coordinates to represent the location pin
+                context.beginPath();
+                context.arc(projectedCoords[0], projectedCoords[1], 4, 0, 2 * Math.PI);
+                context.fillStyle = "brown"; // Set pin color
+
+                context.fill();
+
+
+            });
+        }
+        function drawLocationLabels() {
+            locations.forEach(function (location) {
+                var coords = [location.longitude, location.latitude];
+                var projectedCoords = projection(coords);
+
+                // Individual label offset for each location
+                var labelOffsetX = location.offsetX || 0; // Default to 0 if offsetX is not defined
+                var labelOffsetY = location.offsetY || 0; // Default to 0 if offsetY is not defined
+
+                // Apply offset to the projected coordinates
+                var labelX = projectedCoords[0] + labelOffsetX;
+                var labelY = projectedCoords[1] + labelOffsetY;
+
+                // Draw location label
+                // Define the maximum zoom level for font size 24
+                var maxZoomLevelFor24FontSize = 10000;
+
+                // Calculate the font size based on the current zoom level
+                var currentZoomLevel = projection.scale();
+                var fontSize;
+
+                if (currentZoomLevel > maxZoomLevelFor24FontSize) {
+                    fontSize = 24;
+                } else {
+                    // Use the interpolated font size for zoom levels below 10000
+                    var zoomLevels = [855, maxZoomLevelFor24FontSize]; // Zoom levels
+                    var fontSizes = [16, 24]; // Corresponding font sizes
+
+                    // Interpolate the font size based on the current zoom level
+                    var interpolateFontSize = d3.scaleLinear()
+                        .domain(zoomLevels)
+                        .range(fontSizes);
+
+                    fontSize = interpolateFontSize(currentZoomLevel);
+                }
+
+                // Apply the font size
+                context.font = fontSize + "px Libre Baskerville";
+
+                context.fillStyle = "black";
+                context.fillText(location.name, labelX, labelY);
+                // Draw curved arrow
+                var locationX = projectedCoords[0];
+                var locationY = projectedCoords[1];
+                var midpointX = (locationX + labelX) / 2;
+                var midpointY = (locationY + labelY) / 2;
+
+                context.beginPath();
+                context.moveTo(locationX, locationY);
+                context.quadraticCurveTo(midpointX, midpointY, labelX, labelY);
+                context.strokeStyle = "grey"; // Set arrow color
+                context.lineWidth = 0.5; // Set arrow width
+                context.stroke();
+
+                // Draw arrowhead
+                var angle = Math.atan2(labelY - midpointY, labelX - midpointX);
+                context.beginPath();
+                context.moveTo(labelX, labelY);
+                context.lineTo(labelX - 6 * Math.cos(angle - Math.PI / 6), labelY - 6 * Math.sin(angle - Math.PI / 6));
+                context.lineTo(labelX - 6 * Math.cos(angle + Math.PI / 6), labelY - 6 * Math.sin(angle + Math.PI / 6));
+                context.lineTo(labelX, labelY);
+                context.fillStyle = "grey"; // Set arrowhead color
+                context.fill();
+
+
+                // Draw lines connecting the locations
+                context.beginPath();
+                locations.forEach(function (location) {
+                    var coords = [location.longitude, location.latitude];
+                    var projectedCoords = projection(coords);
+                    context.lineTo(projectedCoords[0], projectedCoords[1]);
+                });
+                context.strokeStyle = "#A68758"; // Set line color
+                context.lineWidth = 0.8; // Set line width
+                context.stroke();
+
+            }
+
+            );
+        }
+
+
+    </script>
+
+
+</body>
