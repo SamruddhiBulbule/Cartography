@@ -39,6 +39,62 @@
 
 </script>
 <style>
+
+/* Ensure the carousel container is positioned correctly */
+.carousel {
+    position: relative; /* Keeps buttons inside */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Styling the Previous and Next Buttons */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 30px; /* Small button size */
+    height: 30px;
+    background-color: rgb(135, 206, 250); /* Light blue */
+    padding: 5px;
+   
+    position: absolute;
+    top: 50%;  /* Center vertically */
+    transform: translateY(-50%); /* Adjust for exact centering */
+    z-index: 10; /* Ensure buttons are on top */
+    border: none;
+}
+
+/* Hover Effect */
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background-color: rgba(135, 206, 250, 0.9); /* Slightly darker blue on hover */
+    transform: translateY(-50%) scale(1.1); /* Slightly enlarges */
+}
+
+/* Icon Styling */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    
+    width: 14px;
+    height: 14px;
+    color: black;
+}
+
+/* Keep buttons inside the card */
+.carousel-control-prev {
+    left: 14px; /* Move inside */
+}
+
+.carousel-control-next {
+    right: 14px; /* Move inside */
+}
+
+
+
+
+
+
+
+
     #offcanvasBottom {
         top: 30px;
         height: 100vh;
@@ -124,6 +180,9 @@
         height: 56px;
         display: none;
 
+    }
+    #bluebutton{
+        color: blue;
     }
 
     #infobutton {
@@ -244,7 +303,7 @@
                                         <p class="card-text">In Search of Understanding: Embracing Diversity on the Road
                                         </p>
                                         <button onclick="hidenav();zoomToIndia();"
-                                            class=" btn btn-warning">Explore</button>
+                                            class=" btn btn-primary">Explore</button>
 
                                     </div>
                                 </div>
@@ -257,7 +316,7 @@
                                         <p class="card-text">From Monk to Rockstar: Captivating Audiences, Sparking a
                                             Movement</p>
                                         <button onclick="hidenav();zoomToUS();"
-                                            class=" btn btn-warning">Explore</button>
+                                            class=" btn btn-primary">Explore</button>
 
                                     </div>
                                 </div>
@@ -270,7 +329,7 @@
                                         <h6 class="card-subtitle mb-2 text-muted">Chapter III (1897)</h6>
                                         <p class="card-text">Building Institutions & Empowering Youth
                                         </p>
-                                        <button onclick="" class=" btn btn-secondary">Explore</button>
+                                        <button onclick="" class=" btn btn-secondary">Coming Soon</button>
 
                                     </div>
                                 </div>
@@ -1299,7 +1358,19 @@
                 };
 
                 return `<div id="ContentHtml">
-    <div class="card text-dark bg-light mb-3" style="max-width: 22rem; margin: 80px;">
+                <div style="margin-top:40px; margin-left :80px; max-width: 22rem;">
+    <div class="card border-danger mb-3">
+  <div class="card-header">What Happened Later?</div>
+  <div class="card-body text-danger">
+    <h5 class="card-title">Swami on Beedi Packet</h5>
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#kobemodal">How?</button>
+    
+    
+  </div>
+</div>
+    
+</div>
+    <div class="card text-dark bg-light mb-3" style="max-width: 22rem; margin: 80px; margin-top: 20px;">
     <div class="card-body">
         <!-- Carousel -->
         <div id="carouselExampleDark" class="carousel carousel-dark slide chinacarousal" data-bs-ride="carousel" style="margin-bottom: 20px;">
@@ -1331,18 +1402,7 @@
         
         </div>
 </div>
-<div style="margin-top:0px; margin-left :80px; max-width: 22rem;">
-    <div class="card border-danger mb-3">
-  <div class="card-header">What Happened Later?</div>
-  <div class="card-body text-danger">
-    <h5 class="card-title">Swami on Beedi Packet</h5>
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#kobemodal">How?</button>
-    
-    
-  </div>
-</div>
-    
-</div>
+
 <div id="kobemodal" class="modal fade bd-example-modal-lg center" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -1479,7 +1539,7 @@
 </div>
 
 
-<button id='infobutton' data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom" class='btn btn-warning rounded-circle-fixed rounded-circle p-3 d-flex align-items-center justify-content-center'>
+<button id='infobutton' data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom" class='btn btn-primary rounded-circle-fixed rounded-circle p-3 d-flex align-items-center justify-content-center'>
   <i class="fas fa-question"></i>
 </button>
 
@@ -1581,7 +1641,7 @@
   <div class="card-header">Lecture Series at Detroit</div>
   <div class="card-body">
     <p>Swami Vivekananda visited Detroit between February and March of 1894.His visit to Detroit was facilitated by Thomas W. Palmer, Senator from State of Michigan, who was the president of the National Commission of the World Columbian Expo in Chicago 1890-1893. Thomas Palmer was a Unitarian and also a member of the freemasons.</p>
-    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#detroitmodal">Where?</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detroitmodal">Where?</button>
     
     
   </div>
